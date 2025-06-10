@@ -1,5 +1,3 @@
-Here is the **README** for your Prisma Job Board video, using the exact same template you gave:
-
 ---
 
 # Build a Job Board App with Next.js & Prisma
@@ -134,10 +132,3 @@ Your live app will be hosted on a custom subdomain (e.g. `https://your-job-board
 * [Vercel](https://vercel.com/)
 
 ---
-
-If you'd like, I can also generate:
-✅ A **title** you can use for this YouTube video
-✅ A **SEO-friendly YouTube description**
-✅ A **shorter README variant for GitHub**
-
-Would you like me to prepare those too? (You can just say *yes* and I’ll give them ready to copy 🚀)
