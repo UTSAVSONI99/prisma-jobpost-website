@@ -7,7 +7,7 @@ Here is the **README** for your Prisma Job Board video, using the exact same tem
 <div align="center">
   <br />
   <a href="https://youtu.be/YOUR_VIDEO_ID" target="_blank">
-    <img src="https://github.com/user-attachments/assets/297ea017-d084-48a1-a064-513d1b6b3d0c" alt="Job Board App Banner">
+    <img src="https://github.com/user-attachments/assets/46671cca-93aa-4c99-b965-b7030fbed4d6" alt="Job Board App Banner">
   </a>
   <br />
   <div>
@@ -106,10 +106,8 @@ Your app will be available at: [http://localhost:3000](http://localhost:3000)
 ---
 
 ## 🖼️ Screenshots
-
-<img src="https://github.com/user-attachments/assets/your-job-board-screenshot-1.png" width="600" />
-
-<img src="https://github.com/user-attachments/assets/your-job-board-screenshot-2.png" width="600" />
+<img width="1347" alt="Home" src="https://github.com/user-attachments/assets/dcde382d-f842-4493-af5e-0b956cb89b46" />
+<img width="1243" alt="Dashboard" src="https://github.com/user-attachments/assets/29da6fbc-6b8c-4475-88ad-a9b700461401" />
 
 ---
 
