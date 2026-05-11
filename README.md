@@ -1,111 +1,215 @@
----
+# Job Board Website
 
-# Job Posting Website
+A full-stack job board built with Next.js App Router, Prisma, PostgreSQL, and NextAuth v5.
 
-A job board project built with Next.js, Prisma, PostgreSQL, and NextAuth.
-
-This README reflects the current project state as of May 2026 and will be updated as more features are completed.
-
-## Current Status
-
-Work in progress.
-
-Implemented so far:
-
-- Next.js app initialized with App Router and TypeScript
-- Prisma schema created with migrations
-- PostgreSQL connection wired through Prisma
-- NextAuth v5 setup with Prisma adapter
-- GitHub sign-in flow added
-- Sign-in page UI created
-- Shared Navbar component created
-
-Not completed yet:
-
-- Job listing page
-- Post job page
-- Dashboard page
-- Job details and application flows
-- Terms and Privacy pages linked from sign-in page
-- Home page content is still the default starter template
+Users can:
+- Sign in with GitHub
+- Browse and search jobs
+- View individual job details
+- Post new jobs (authenticated)
+- Apply to jobs (authenticated)
+- Track posted jobs and applications in a dashboard
 
 ## Tech Stack
 
-- Next.js 15
+- Next.js 15 (App Router)
 - React 19
 - TypeScript
-- Prisma ORM
-- PostgreSQL (pg)
-- NextAuth v5 (GitHub provider)
+- Prisma ORM + Prisma PostgreSQL adapter
+- PostgreSQL
+- NextAuth v5 + Prisma Adapter
 - Tailwind CSS 4
+- date-fns
 
-## Database Models
+## Features
 
-Current Prisma models:
+- Authentication
+- GitHub OAuth login using NextAuth
+- Session-aware navigation and protected actions
 
-- User
-- Account
-- Session
-- VerificationRequest
-- Job
-- Application
+- Job Discovery
+- Home page with latest 3 jobs
+- Jobs page with filters:
+   - keyword (`q`)
+   - job type (`type`)
+   - location (`location`)
 
-The schema includes relations for:
+- Job Posting
+- Authenticated users can create jobs from `/jobs/post`
+- Server API persists jobs with the logged-in user as poster
 
-- A user posting many jobs
-- A user applying to many jobs
-- Unique application per user per job
+- Job Applications
+- Authenticated users can apply to a job from the job details page
+- Duplicate applications are blocked by API + DB unique constraint
+
+- Dashboard
+- Shows jobs posted by current user
+- Shows applications submitted by current user
+- Includes application status badge (`pending`, `accepted`, `rejected`)
+
+## Routes
+
+### Pages
+
+- `/` - Home with recent jobs
+- `/jobs` - Job listing with search/filter
+- `/jobs/[id]` - Job details + apply button
+- `/jobs/post` - Post job form (requires login to complete action)
+- `/dashboard` - User dashboard (redirects to sign-in if unauthenticated)
+- `/auth/signin` - GitHub sign-in page
+
+### API
+
+- `GET /api/jobs`
+   - Returns all jobs (latest first)
+
+- `POST /api/jobs`
+   - Creates a new job for authenticated user
+   - Returns `201` with created job payload
+
+- `POST /api/jobs/[jobId]/apply`
+   - Creates application for authenticated user
+   - Returns:
+      - `201` on success
+      - `400` if already applied
+      - `404` if job does not exist
+
+- `GET|POST /api/auth/[...nextauth]`
+   - NextAuth handlers
+
+## Database Schema (Prisma)
+
+Core models:
+- `User`
+- `Account`
+- `Session`
+- `VerificationToken`
+- `Job`
+- `Application`
+
+Important relationships:
+- One `User` can post many `Job` records
+- One `User` can submit many `Application` records
+- One `Job` can have many `Application` records
+
+Important constraints:
+- `Application` has `@@unique([jobId, userId])` to prevent duplicate applications
+
+Prisma schema path:
+- `prisma/schema.prisma`
 
 ## Project Structure
 
-- app: routes and layout
-- app/api/auth/[...nextauth]/route.ts: NextAuth route handlers
-- app/auth/signin/page.tsx: sign-in page
-- components/Navbar.tsx: top navigation
-- lib/auth.ts: server actions for sign in/out
-- lib/prisma.ts: Prisma client setup
-- prisma/schema.prisma: database schema
+```text
+app/
+   api/
+      auth/[...nextauth]/route.ts
+      jobs/route.ts
+      jobs/[jobId]/apply/route.ts
+   auth/signin/page.tsx
+   dashboard/page.tsx
+   jobs/page.tsx
+   jobs/post/page.tsx
+   jobs/[id]/page.tsx
+   page.tsx
 
-## Local Setup
+auth.ts
+auth.config.ts
+middleware.ts
+lib/
+   auth.ts
+   prisma.ts
+prisma/
+   schema.prisma
+   migrations/
+```
 
-1. Install dependencies:
+## Prerequisites
 
-   pnpm install
+- Node.js 20+
+- pnpm
+- PostgreSQL database
+- GitHub OAuth app credentials
 
-2. Create a .env file with at least:
+## Environment Variables
 
-   DATABASE_URL=your_postgres_connection_string
-   AUTH_SECRET=your_random_secret
-   AUTH_GITHUB_ID=your_github_oauth_client_id
-   AUTH_GITHUB_SECRET=your_github_oauth_client_secret
+Create a `.env` file in the project root:
 
-3. Generate Prisma client and run migrations:
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DB_NAME
 
-   npx prisma generate
-   npx prisma migrate dev
+AUTH_SECRET=your_random_long_secret
+AUTH_GITHUB_ID=your_github_oauth_client_id
+AUTH_GITHUB_SECRET=your_github_oauth_client_secret
+```
 
-4. Start development server:
+Notes:
+- `DATABASE_URL` is used by Prisma and runtime DB access.
+- For GitHub OAuth callback, set your app callback URL to:
+   - `http://localhost:3000/api/auth/callback/github` (local)
 
-   pnpm dev
+## Local Development
 
-App runs at:
+1. Install dependencies
+
+```bash
+pnpm install
+```
+
+2. Generate Prisma client
+
+```bash
+npx prisma generate
+```
+
+3. Apply migrations
+
+```bash
+npx prisma migrate dev
+```
+
+4. Start development server
+
+```bash
+pnpm dev
+```
+
+5. Open app
+
+```text
 http://localhost:3000
+```
 
-## Scripts
+## Available Scripts
 
-- pnpm dev: run development server
-- pnpm build: build for production
-- pnpm start: start production server
-- pnpm lint: run lint checks
+- `pnpm dev` - Start Next.js dev server (Turbopack)
+- `pnpm build` - Build for production
+- `pnpm start` - Run production server
+- `pnpm lint` - Run ESLint checks
 
-## Next Milestones
+## Auth and Session Notes
 
-- Replace default home page with real job board UI
-- Build jobs browsing and filtering
-- Build post-job form (protected)
-- Build user dashboard
-- Build apply flow and application management
+- Auth config is in `auth.config.ts`.
+- NextAuth initialization is in `auth.ts`.
+- JWT/session callbacks attach user id and name to the session.
+- Navbar renders session-aware links and sign-out action.
+
+## Deployment Checklist
+
+- Set all environment variables in hosting platform
+- Use a production PostgreSQL database
+- Run migrations in production before first traffic
+- Configure GitHub OAuth callback URL for production domain
+- Build command: `pnpm build`
+- Start command: `pnpm start`
+
+## Known Improvements (Optional)
+
+- Add explicit request validation (Zod) for API payloads
+- Improve API error handling for non-2xx responses in UI forms
+- Add tests (unit + integration) for auth and apply flows
+- Add Terms and Privacy pages linked from sign-in screen
 
 ## License
 
-No license file added yet.
+No license file is included yet.

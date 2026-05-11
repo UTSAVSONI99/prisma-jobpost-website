@@ -29,10 +29,8 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: "Failed to post job" }, { status: 500 });
      }
         
-
-
-
-}
+    
+    }
 
 
 export async function GET(request: Request) {
