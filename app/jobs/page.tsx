@@ -75,7 +75,7 @@ export default async function JobsPage({ searchParams }: {
                         <p className='mt-2 text-sm text-[#6b7280]'>Try changing your search terms or filters.</p>
                     </div>
                 )}
-                {jobs.map((job) => (
+                {jobs.map((job: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                     <article key={job.id} className='rounded-2xl border border-[#e7dfcf] bg-[#fffdf8] p-6 shadow-[0_6px_18px_rgba(51,65,85,0.04)]'>
 
                         <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-start'>

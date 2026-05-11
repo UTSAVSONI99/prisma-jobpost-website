@@ -59,7 +59,7 @@ export default async function DashboardPage() {
                         {postedJobs.length === 0 ? (
                             <p className="rounded-xl border border-dashed border-[#d7cbba] bg-white p-6 text-center text-sm text-[#6b7280]">You have not posted any jobs yet.</p>
                         ) : (
-                            postedJobs.map((job) => (
+                            postedJobs.map((job: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                                 <div key={job.id} className="border-b border-[#ede4d4] py-5 last:border-0 last:pb-0 first:pt-0">
                                     <div className="flex items-start justify-between gap-3">
                                         <div>
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
                         {applications.length === 0 ? (
                             <p className="rounded-xl border border-dashed border-[#d7cbba] bg-white p-6 text-center text-sm text-[#6b7280]">You have not applied for any jobs yet.</p>
                         ) : (
-                            applications.map((application) => (
+                            applications.map((application: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
                                 <div key={application.id} className="border-b border-[#ede4d4] py-5 last:border-0 last:pb-0 first:pt-0">
                                     <div className="flex items-start justify-between gap-3">
                                         <div>

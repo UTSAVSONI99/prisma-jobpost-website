@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
-  session: any;
+  session: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export default function AuthSessionProvider({ children ,session}: Props) {

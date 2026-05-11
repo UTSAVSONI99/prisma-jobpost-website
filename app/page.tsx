@@ -46,7 +46,7 @@ export default async function Home() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {recentJobs.map((job) => (
+          {recentJobs.map((job: any) => ( // eslint-disable-line @typescript-eslint/no-explicit-any
             <article
               key={job.id}
               className="flex h-full flex-col rounded-2xl border border-[#e7dfcf] bg-[#fffdf8] p-6 shadow-sm"

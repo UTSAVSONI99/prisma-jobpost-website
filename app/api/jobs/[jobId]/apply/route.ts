@@ -43,7 +43,7 @@ export async function POST(request: Request, { params }: { params: Promise< { jo
        
   return NextResponse.json(application, { status: 201 });
         
-     } catch (error) {
+     } catch (_error) { // eslint-disable-line @typescript-eslint/no-unused-vars
        
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
      }

@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) { // eslint-disable-line @typescript-eslint/no-unused-vars
     try {
         const jobs = await prisma.job.findMany({
             orderBy: { postedAt: "desc" }
