@@ -1,6 +1,5 @@
 "use client"
 import Link from 'next/link'
-import React from 'react'
 import Image from 'next/image'
 import {  useSession } from 'next-auth/react';
 
@@ -9,37 +8,44 @@ import { logout } from '@/lib/auth';
 export default function Navbar() {
   const{data:session} = useSession();
   return (
-    <nav className='bg-white shadow-md'>
+    <header className='sticky top-0 z-40 border-b border-[#e7dfcf]/70 bg-[#fffdf8]/90 backdrop-blur'>
+      <nav className='mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8'>
+        <Link href="/" className='flex items-center gap-3'>
+          <div className='rounded-full bg-[#0f766e]/10 p-1.5 ring-1 ring-[#0f766e]/20'>
+            <Image src="/logo.png" alt="Job Board Logo" width={34} height={34} className='h-7 w-auto' />
+          </div>
+          <span className='text-lg font-semibold tracking-tight text-[#1f2937]'>
+            Job Board
+          </span>
+        </Link>
 
-        <div className='max-w-7xl mx-auto px-4  sm:px-6 lg:px-8'>
-            <div className='flex justify-between h-16 '>
-               <div className='flex '>
-                 <Link href="/" className='flex items-center'>
-                   <Image src="/logo.png" alt="Job Board Logo" width={40} height={40}  className='h-8 w-auto' />
-                 <span className='ml-2 text-xl font-semibold text-gray-900'>
-                     Job Board
-                 </span>
-                 </Link>
-                </div> 
+        <div className='flex items-center gap-1.5 sm:gap-3'>
+          <Link href="/jobs" className='rounded-full px-3 py-2 text-sm font-medium text-[#374151] hover:bg-[#efe7d8] hover:text-[#1f2937]'>
+            Browse Jobs
+          </Link>
 
-
-                <div className='flex items-center space-x-4'>
-                    <Link href="/jobs" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Browse Jobs </Link> 
-                    
-                    {session ? (
-                      <>
-                        <Link href="/jobs/post" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Post a Job </Link> 
-                        <Link href="/dashboard" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Dashboard </Link> 
-                        <button className='text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium' onClick ={ logout}> Sign Out </button>
-                      </>
-                    ) : (
-                      <Link href="/auth/signin" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Sign In </Link> 
-                    )}
-
-
-                </div>
-            </div>
+          {session ? (
+            <>
+              <Link href="/jobs/post" className='rounded-full px-3 py-2 text-sm font-medium text-[#374151] hover:bg-[#efe7d8] hover:text-[#1f2937]'>
+                Post Job
+              </Link>
+              <Link href="/dashboard" className='rounded-full px-3 py-2 text-sm font-medium text-[#374151] hover:bg-[#efe7d8] hover:text-[#1f2937]'>
+                Dashboard
+              </Link>
+              <button
+                className='rounded-full border border-[#d9ccb7] bg-white px-3 py-2 text-sm font-medium text-[#6b7280] hover:border-[#c9b79c] hover:text-[#1f2937]'
+                onClick={logout}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <Link href="/auth/signin" className='rounded-full bg-[#0f766e] px-4 py-2 text-sm font-semibold text-white hover:bg-[#115e59]'>
+              Sign In
+            </Link>
+          )}
         </div>
-    </nav>
+      </nav>
+    </header>
   )
 }

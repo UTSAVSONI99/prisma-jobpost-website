@@ -1,19 +1,18 @@
 "use client"
 
 
-import { set } from "date-fns";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { text } from "stream/consumers";
 
 export default function ApplyButton({ jobId }: { jobId: string }) {
 
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [errorMessage, setErrorMessage] = useState<string>(" ");
+    const [errorMessage, setErrorMessage] = useState<string>("");
     const [applicationStatus, setApplicationStatus] = useState<"idle" | "error" | "success">("idle");
+    const [isApplying, setIsApplying] = useState(false);
 
 
     const handleApply = async () => {
@@ -24,8 +23,9 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
 
 
 
-        setErrorMessage(" ");
+        setErrorMessage("");
         setApplicationStatus("idle");
+        setIsApplying(true);
 
 
         try {
@@ -36,6 +36,12 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
                 }
 
             });
+
+            if (!response.ok) {
+                const payload = await response.json().catch(() => null);
+                throw new Error(payload?.message || "Failed to apply for this job.");
+            }
+
             setApplicationStatus("success");
 
         } catch (error) {
@@ -45,6 +51,8 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
                 setErrorMessage("Failed to apply for the job.");
             }
             setApplicationStatus("error");
+        } finally {
+            setIsApplying(false);
 
         }
     }
@@ -53,7 +61,7 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
 
 
     if (status === "loading") {
-        return <button disabled>Loading...</button>
+        return <button disabled className="w-full rounded-xl border border-[#d9ccb7] bg-white px-6 py-3 text-sm font-medium text-[#6b7280]">Loading...</button>
     }
 
     if (applicationStatus === "success") {
@@ -61,11 +69,11 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
         return (
 
             <div className="text-center">
-                <p className="text-green-500 font-medium mb-4">
+                <p className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
                     Application submitted successfully!
                 </p>
                 <Link href="/dashboard"
-                    className="text-indigo-600 hover:text-indigo-700 font-medium">View Your Application</Link>
+                    className="text-sm font-semibold text-[#0f766e] hover:text-[#115e59]">View your application</Link>
             </div>
         );
     }
@@ -75,10 +83,15 @@ export default function ApplyButton({ jobId }: { jobId: string }) {
         <>
 
             <button onClick={handleApply}
-                className="w-full px-6 py-3 bg-indigo-600 text-white rounded-md font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-700 transition-colors duration-300">
-                Apply for this position
+                disabled={isApplying}
+                className="w-full rounded-xl bg-[#0f766e] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#115e59] disabled:cursor-not-allowed disabled:opacity-60">
+                {isApplying ? "Applying..." : "Apply for this position"}
             </button>
-            {applicationStatus === "error" && <p style={{ color: "red", textAlign: "center", fontWeight: "medium" }}>{errorMessage}</p>}
+            {applicationStatus === "error" && (
+                <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center text-sm font-medium text-red-700">
+                    {errorMessage}
+                </p>
+            )}
         </>
     )
 }

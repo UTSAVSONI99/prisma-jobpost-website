@@ -14,63 +14,61 @@ export default async function DashboardPage() {
 
     } 
     const [applications, postedJobs] = await Promise.all([
- 
-    // Appliation Query
-    prisma.application.findMany({
-        where: { userId: session.user.id },
-        include: {
-          job: {     
-     
-         include: {
-            postedBy: true
-         }
-            }
-        },
-        orderBy: { appliedAt: "desc" }
-    }),
+        prisma.application.findMany({
+            where: { userId: session.user.id },
+            include: {
+                job: {
+                    include: {
+                        postedBy: true
+                    }
+                }
+            },
+            orderBy: { appliedAt: "desc" }
+        }),
 
-    // Posted Jobs Query
-    prisma.job.findMany({
-        where: { postedById: session.user.id },
-        include: {
-            _count: {
-                select: { applications: true }
-            }
-        },
-        orderBy: { postedAt: "desc" }
-    })
+        prisma.job.findMany({
+            where: { postedById: session.user.id },
+            include: {
+                _count: {
+                    select: { applications: true }
+                }
+            },
+            orderBy: { postedAt: "desc" }
+        })
     ]);
  
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <h1 className="text-2xl font-bold  text-gray-900 mb-8">Welcome to your Dashboard, {session.user.name}!</h1>
-            <div className="grid gap-8 md:grid-cols-2 ">
-                {/* {posted jobs and applications will be displayed here} */}
+        <div className="space-y-8 py-2">
+            <section className="rounded-3xl border border-[#e7dfcf] bg-[#fffdf8] p-6 shadow-[0_10px_28px_rgba(51,65,85,0.06)] sm:p-8">
+                <p className='mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#6b7280]'>Dashboard</p>
+                <h1 className="text-3xl font-bold tracking-tight text-[#1f2937]">Welcome back, {session.user.name ?? "there"}</h1>
+                <p className="mt-2 text-sm text-[#6b7280]">Monitor your posted jobs and applications in one place.</p>
+            </section>
+
+            <div className="grid gap-6 lg:grid-cols-2">
 
                 <div>
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-semibold text-gray-900"> Posted Jobs</h2>
-                        <Link href="/jobs/post" className="text-indigo-600 hover:text-indigo-700 font-medium"> Post a New Job </Link>
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-xl font-semibold text-[#1f2937]">Posted Jobs</h2>
+                        <Link href="/jobs/post" className="text-sm font-semibold text-[#0f766e] hover:text-[#115e59]">Post a New Job</Link>
 
                     </div>
 
 
-                    <div className="bg-white shadow-md  rounded-lg  divide-y divide-gray-200 p-6">
+                    <div className="rounded-2xl border border-[#e7dfcf] bg-[#fffdf8] p-6 shadow-[0_8px_20px_rgba(51,65,85,0.05)]">
                         {postedJobs.length === 0 ? (
-                            <p className="p-6 text-gray-500 text-center">You haven't posted any jobs yet.</p>
+                            <p className="rounded-xl border border-dashed border-[#d7cbba] bg-white p-6 text-center text-sm text-[#6b7280]">You have not posted any jobs yet.</p>
                         ) : (
                             postedJobs.map((job) => (
-                                <div key={job.id} className="py-6">
-                                    <div className="flex items-start justify-between">
+                                <div key={job.id} className="border-b border-[#ede4d4] py-5 last:border-0 last:pb-0 first:pt-0">
+                                    <div className="flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 className="text-lg font-medium text-gray-900 mb-1">{job.title}</h3>
-                                            <p className=" text-gray-500 mb-2">{job.company}</p>
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <span> {job.location} </span>
-                                                <span className='mx-2'>. </span>
+                                            <h3 className="mb-1 text-lg font-semibold text-[#1f2937]">{job.title}</h3>
+                                            <p className="mb-2 text-sm text-[#6b7280]">{job.company}</p>
+                                            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#6b7280]">
+                                                <span className='rounded-full bg-[#efe7d8] px-2.5 py-1'>{job.location}</span>
                                                 <span>{job.type}</span>
-                                                <span className='mx-2'>. </span>
-                                                <span> {formatDistanceToNow(new Date(job.postedAt), { addSuffix: true })} ago</span>
+                                                <span>Posted {formatDistanceToNow(new Date(job.postedAt), { addSuffix: true })}</span>
 
 
                                             </div>
@@ -78,14 +76,14 @@ export default async function DashboardPage() {
                                         </div>
 
                                         <div className="text-right">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs  font-medium bg-indigo-100 text-indigo-800    ">
-                                                {job._count.applications} appliations
+                                            <span className="inline-flex items-center rounded-full bg-[#e6f4f1] px-2.5 py-1 text-xs font-semibold text-[#115e59]">
+                                                {job._count.applications} applications
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="mt-4 flex  justify-end space-x-4">
-                                        <Link href={`/jobs/${job.id}`} className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"> View Job  </Link>
-                                        <Link href={`/dashboard/applications/${job.id}`} className="text-gray-600 hover:text-gray-700 text-sm font-medium">View Appliation </Link>
+                                    <div className="mt-4 flex justify-end gap-4">
+                                        <Link href={`/jobs/${job.id}`} className="text-sm font-semibold text-[#0f766e] hover:text-[#115e59]">View Job</Link>
+                                        <Link href={`/dashboard/applications/${job.id}`} className="text-sm font-semibold text-[#6b7280] hover:text-[#1f2937]">View Applications</Link>
 
                                     </div>
                                 </div>
@@ -97,32 +95,28 @@ export default async function DashboardPage() {
                 </div>
 
 
-                {/* {Application Status } */}
-
                 <div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6"> Your Applications</h2>
+                    <h2 className="mb-4 text-xl font-semibold text-[#1f2937]">Your Applications</h2>
 
-                    <div className="bg-white shadow-md rounded-lg divide-y divide-gray-200 p-6">
+                    <div className="rounded-2xl border border-[#e7dfcf] bg-[#fffdf8] p-6 shadow-[0_8px_20px_rgba(51,65,85,0.05)]">
                         {applications.length === 0 ? (
-                            <p className="p-6 text-gray-500 text-center">You haven't applied for any jobs yet.</p>
+                            <p className="rounded-xl border border-dashed border-[#d7cbba] bg-white p-6 text-center text-sm text-[#6b7280]">You have not applied for any jobs yet.</p>
                         ) : (
                             applications.map((application) => (
-                                <div key={application.id} className="py-6">
-                                    <div className="flex items-start justify-between">
+                                <div key={application.id} className="border-b border-[#ede4d4] py-5 last:border-0 last:pb-0 first:pt-0">
+                                    <div className="flex items-start justify-between gap-3">
                                         <div>
-                                            <h3 className="text-lg font-medium text-gray-900 mb-1">{application.job.title}</h3>
-                                            <p className="text-gray-500 mb-2">{application.job.company}</p>
-                                            <div className="flex items-center text-sm text-gray-500">
-                                                <span>{application.job.location}</span>
-                                                <span className='mx-2'>. </span>
+                                            <h3 className="mb-1 text-lg font-semibold text-[#1f2937]">{application.job.title}</h3>
+                                            <p className="mb-2 text-sm text-[#6b7280]">{application.job.company}</p>
+                                            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#6b7280]">
+                                                <span className='rounded-full bg-[#efe7d8] px-2.5 py-1'>{application.job.location}</span>
                                                 <span>{application.job.type}</span>
-                                                <span className='mx-2'>. </span>
                                                 <span>Applied {formatDistanceToNow(new Date(application.appliedAt), { addSuffix: true })}</span>
                                             </div>
                                         </div>
 
                                         <div className="text-right">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                            <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                                                 application.status === "pending" ? "bg-yellow-100 text-yellow-800" :
                                                     application.status === "accepted" ? "bg-green-100 text-green-800" :
                                                         "bg-red-100 text-red-800"
@@ -131,8 +125,8 @@ export default async function DashboardPage() {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="mt-4 flex justify-end space-x-4">
-                                        <Link href={`/jobs/${application.jobId}`} className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"> View Job  </Link>
+                                    <div className="mt-4 flex justify-end gap-4">
+                                        <Link href={`/jobs/${application.jobId}`} className="text-sm font-semibold text-[#0f766e] hover:text-[#115e59]">View Job</Link>
                                     </div>
                                 </div>
                             ))
