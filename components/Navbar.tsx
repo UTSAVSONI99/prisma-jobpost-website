@@ -1,8 +1,13 @@
+"use client"
 import Link from 'next/link'
 import React from 'react'
 import Image from 'next/image'
+import {  useSession } from 'next-auth/react';
+
+import { logout } from '@/lib/auth';
 
 export default function Navbar() {
+  const{data:session} = useSession();
   return (
     <nav className='bg-white shadow-md'>
 
@@ -20,11 +25,16 @@ export default function Navbar() {
 
                 <div className='flex items-center space-x-4'>
                     <Link href="/jobs" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Browse Jobs </Link> 
-                    <Link href="/jobs/post" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Post a Job </Link> 
-                    <Link href="/dashboard" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Dashboard </Link> 
-
-
-                    <Link href="/auth/signin" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Sign In </Link> 
+                    
+                    {session ? (
+                      <>
+                        <Link href="/jobs/post" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Post a Job </Link> 
+                        <Link href="/dashboard" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Dashboard </Link> 
+                        <button className='text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium' onClick ={ logout}> Sign Out </button>
+                      </>
+                    ) : (
+                      <Link href="/auth/signin" className='text-gray-900 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium'> Sign In </Link> 
+                    )}
 
 
                 </div>
